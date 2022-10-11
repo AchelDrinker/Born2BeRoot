@@ -1,0 +1,73 @@
+
+Q : Pourquoi Debian ?
+R : C'est plus facile à installer et à configurer que CentOS (et je n'ai jamais utilisé CentOS auparavant).
+
+Q : Qu'est-ce qu'une machine virtuelle ?
+R : Une machine virtuelle (VM) est une ressource informatique qui utilise un logiciel au lieu d'un ordinateur physique pour exécuter des programmes et déployer des applications. 
+applications. Chaque machine virtuelle exécute son propre système d'exploitation et fonctionne séparément des autres VM, même si elles sont toutes exécutées sur le même hôte.
+même lorsqu'elles fonctionnent toutes sur le même hôte. Par exemple, vous pouvez exécuter une machine virtuelle MacOS sur un PC physique. 
+
+Q : A quoi sert-elle ?
+R : Les machines virtuelles peuvent être déployées pour répondre à différents niveaux de besoins en matière de puissance de traitement, pour exécuter des logiciels qui nécessitent un système d'exploitation différent ou pour tester des applications dans un environnement sûr et protégé. 
+
+Q : Comment cela fonctionne-t-il ?
+R : La VM fonctionne grâce à la technologie de "virtualisation". La virtualisation utilise un logiciel pour simuler un matériel virtuel qui permet aux VM de fonctionner sur une seule machine hôte.
+
+Q : Différence entre aptitude et apt ?
+R : Aptitude est un gestionnaire de paquets de haut niveau, tandis qu'APT est un gestionnaire de paquets de niveau inférieur qui peut être utilisé par d'autres gestionnaires de paquets de niveau supérieur.
+
+Q : Qu'est-ce qu'AppArmor ?
+R : AppArmor ("Application Armor") est un module de sécurité du noyau Linux qui permet à l'administrateur système de restreindre les capacités des programmes avec des profils par programme.
+
+Q : Qu'est-ce que SSH ?
+R : SSH, également connu sous le nom de Secure Shell ou Secure Socket Shell, est un protocole réseau qui offre aux utilisateurs, en particulier aux administrateurs système, un moyen sécurisé d'accéder à un ordinateur via un réseau non sécurisé.
+
+———————————————————————————————————————————————————————
+
+| $ sudo adduser username | <- création d'un nouvel utilisateur (oui (non))
+| $ sudo chage -l username | <- Vérifier l'info d'expiration du mot de passe pour le nouvel utilisateur
+| $ sudo adduser username sudo | <- création d'un nouvel utilisateur (oui (non))
+| $ sudo adduser username user42 | <- Assigner le nouvel utilisateur aux groupes sudo et user42
+
+| 1) lsblk 						1 <- Vérifier les partitions
+| 2) sudo aa-status 					2 <- Etat de AppArmor
+| 3) getent group sudo 				3 <- sudo group users
+| 4) getent group user42 				4 <- user42 groupe d'utilisateurs
+| 5) sudo service ssh status 			5 <- statut ssh, yep
+| 6) sudo ufw status 					6 <- ufw status
+| 7) ssh username@ipadress -p 4242 		7 <- connectez-vous à la VM depuis votre machine hôte (physique) via SSH
+| 8) nano /etc/sudoers.d/<filename> 		8 <- le fichier de configuration sudo. Vous pouvez commencer par $ ls /etc/sudoers.d
+| 9) nano /etc/login.defs 				9 <- politique d'expiration du mot de passe
+| 10) nano /etc/pam.d/common-password 	10 <- politique de mot de passe
+| 11) sudo crontab -l 				11 <- programme cron
+
+
+Comment changer le nom d'hôte ?
+[$sudo nano /etc/hostname]
+
+Où se trouvent les logs de sudo dans /var/log/sudo ?
+[$cd /var/log/sudo/00/00 && ls]
+Vous verrez beaucoup de répertoires avec des noms comme 01 2B 9S 4D etc. Ils contiennent les logs dont nous avons besoin.
+[$ sudo apt update]
+[$ ls]
+Vous voyez maintenant que nous avons un nouveau répertoire ici.
+[$ cd <nom du nouveau répertoire> && ls]
+[$ cat log] <- Journal des entrées
+[$ cat ttyout] <- Journal de sortie
+
+Comment ajouter et supprimer le port 8080 dans UFW ?
+[$ sudo ufw allow 8080] <- allow
+[$ sudo ufw status] <- check
+[$ sudo ufw deny 8080] <- deny (oui oui)
+
+Comment exécuter le script toutes les 30 secondes ?
+[$ sudo crontab -e]
+Supprimez ou validez le "programme" cron précédent et ajoutez les lignes suivantes dans le fichier crontab
+|*************************************************|
+| * */1 * * * * /path/to/monitoring.sh |
+*/1 * * * * sleep 30s && /path/to/monitoring.sh
+|*************************************************|
+Pour arrêter l'exécution du script au démarrage, il suffit de supprimer ou de commit dans le fichier crontab
+|********************************|
+| @reboot /path/to/monitoring.sh |
+|********************************|
